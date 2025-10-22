@@ -56,66 +56,89 @@
         SelectCommand="SELECT IdPaciente, Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo FROM Pacientes">
     </asp:SqlDataSource>
 
-    <!-- Modal Paciente -->
-    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <asp:Panel ID="pnlAgregar" runat="server">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="modalAgregarLabel">Agregar Paciente 👨‍⚕️</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+   <!-- Modal Paciente -->
+<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <asp:Panel ID="pnlAgregar" runat="server">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalAgregarLabel">Agregar Paciente 👨‍⚕️</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Campos Paciente -->
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
                     </div>
 
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Apellido 1</label>
-                            <asp:TextBox ID="txtApellido1" runat="server" CssClass="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Apellido 2</label>
-                            <asp:TextBox ID="txtApellido2" runat="server" CssClass="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Identificación</label>
-                            <asp:TextBox ID="txtIdentificacion" runat="server" CssClass="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Fecha de Nacimiento</label>
-                            <asp:TextBox ID="txtFechaNacimiento" runat="server" CssClass="form-control" TextMode="Date" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Teléfono</label>
-                            <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Correo</label>
-                            <asp:TextBox ID="txtCorreo" runat="server" CssClass="form-control" TextMode="Email" />
-                            <asp:RegularExpressionValidator ID="revCorreo" runat="server" ControlToValidate="txtCorreo"
-                                ErrorMessage="* Formato de correo inválido"
-                                ValidationExpression="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
-                                CssClass="text-danger" Display="Dynamic" />
-                        </div>
-
-                        <asp:Label ID="lblErrorModal" runat="server" CssClass="text-danger fw-bold" Visible="False"></asp:Label>
+                    <div class="mb-3">
+                        <label class="form-label">Apellido 1</label>
+                        <asp:TextBox ID="txtApellido1" runat="server" CssClass="form-control" />
                     </div>
 
-                    <div class="modal-footer">
-                        <asp:Button ID="btnGuardar" runat="server" Text="Guardar" CssClass="btn btn-success" OnClick="btnGuardar_Click" />
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <div class="mb-3">
+                        <label class="form-label">Apellido 2</label>
+                        <asp:TextBox ID="txtApellido2" runat="server" CssClass="form-control" />
                     </div>
-                </asp:Panel>
-            </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Identificación</label>
+                        <asp:TextBox ID="txtIdentificacion" runat="server" CssClass="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Nacimiento</label>
+                        <asp:TextBox ID="txtFechaNacimiento" runat="server" CssClass="form-control" TextMode="Date" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Correo</label>
+                        <asp:TextBox ID="txtCorreo" runat="server" CssClass="form-control" TextMode="Email" />
+                        <asp:RegularExpressionValidator ID="revCorreo" runat="server" ControlToValidate="txtCorreo"
+                            ErrorMessage="* Formato de correo inválido"
+                            ValidationExpression="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+                            CssClass="text-danger" Display="Dynamic" />
+                    </div>
+
+                    <hr />
+
+                    <!-- Campos Usuario -->
+                    <h6>Cuenta de Usuario</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre de Usuario</label>
+                        <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rol</label>
+                        <asp:DropDownList ID="ddlRol" runat="server" CssClass="form-select">
+                        </asp:DropDownList>
+                    </div>
+
+                    <asp:Label ID="lblErrorModal" runat="server" CssClass="text-danger fw-bold" Visible="False"></asp:Label>
+                </div>
+
+                <div class="modal-footer">
+                    <asp:Button ID="btnGuardar" runat="server" Text="Guardar" CssClass="btn btn-success" OnClick="btnGuardar_Click" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </asp:Panel>
         </div>
     </div>
+</div>
+
 </asp:Content>
 

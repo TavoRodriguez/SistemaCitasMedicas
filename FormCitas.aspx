@@ -23,7 +23,7 @@
 
 
         <div class="row" id="citasContainer" runat="server">
-
+             <!-- citas en forma de card -->
         </div>
     </div>
 

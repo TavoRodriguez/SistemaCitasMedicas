@@ -213,6 +213,7 @@
     <Compile Include="db\dbDoctores.vb" />
     <Compile Include="db\dbEspecialidad.vb" />
     <Compile Include="db\dbPacientes.vb" />
+    <Compile Include="db\dbRoles.vb" />
     <Compile Include="db\dbUsuarios.vb" />
     <Compile Include="Default.aspx.vb">
       <SubType>ASPXCodeBehind</SubType>

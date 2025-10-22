@@ -3,14 +3,13 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <asp:HiddenField ID="editando" runat="server" />
     <div class="container mt-4">
-        <!-- Encabezado y botón Agregar -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="text-primary">Lista de Doctores 🩺</h2>
             <asp:Button ID="btnAgregar" runat="server" Text="Agregar Doctor" CssClass="btn btn-success" OnClientClick="new bootstrap.Modal(document.getElementById('modalAgregar')).show(); return false;" />
 
         </div>
 
-        <!-- Filtro por Especialidad -->
+        <!-- Filtrado por Especialidad -->
         <div class="mb-3">
             <label for="ddlEspecialidad" class="form-label fw-bold">Filtrar por Especialidad:</label>
             <asp:DropDownList ID="ddlEspecialidad" runat="server" CssClass="form-select w-50" AutoPostBack="True" OnSelectedIndexChanged="ddlEspecialidad_SelectedIndexChanged">
@@ -18,7 +17,7 @@
             </asp:DropDownList>
         </div>
 
-        <!-- Tabla de Doctores -->
+        <!-- Tabla Doctores -->
         <div class="table-responsive shadow-sm rounded">
             <asp:GridView ID="gvDoctores" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-hover align-middle"
                 EmptyDataText="No hay doctores registrados" GridLines="None" DataKeyNames="IdDoctor"

@@ -1,14 +1,106 @@
-﻿Public Class FormPacientes
+﻿Imports System.Security.Cryptography
+Imports System.Text
+Public Class FormPacientes
     Inherits System.Web.UI.Page
 
     Public Pacientes As Pacientes
     Protected dbPaciente As New dbPacientes()
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
+        If Not IsPostBack Then
+            CargarRoles()
+        End If
     End Sub
 
     Protected Sub btnGuardar_Click(sender As Object, e As EventArgs) Handles btnGuardar.Click
+
+        Dim camposValidos As Boolean = True
+        Dim mensajeError As String = ""
+
+        ' validaciones del paciente
+        If String.IsNullOrWhiteSpace(txtNombre.Text) Then
+            camposValidos = False
+            mensajeError &= "Debe ingresar el nombre.<br/>"
+        End If
+
+        If String.IsNullOrWhiteSpace(txtApellido1.Text) Then
+            camposValidos = False
+            mensajeError &= "Debe ingresar el primer apellido.<br/>"
+        End If
+
+        If String.IsNullOrWhiteSpace(txtTelefono.Text) Then
+            camposValidos = False
+            mensajeError &= "Debe ingresar el teléfono.<br/>"
+        End If
+
+        If String.IsNullOrWhiteSpace(txtCorreo.Text) Then
+            camposValidos = False
+            mensajeError &= "Debe ingresar el correo electrónico.<br/>"
+        ElseIf Not txtCorreo.Text.Contains("@") OrElse Not txtCorreo.Text.Contains(".") Then
+            camposValidos = False
+            mensajeError &= "El correo electrónico no es válido.<br/>"
+        End If
+
+        ' validaciones usuario
+        If String.IsNullOrWhiteSpace(txtNombreUsuario.Text) Then
+            camposValidos = False
+            mensajeError &= "Debe ingresar el nombre de usuario.<br/>"
+        End If
+
+        If String.IsNullOrWhiteSpace(txtContrasena.Text) Then
+            camposValidos = False
+            mensajeError &= "Debe ingresar la contraseña.<br/>"
+        End If
+
+        If ddlRol.SelectedValue = "0" Then
+            camposValidos = False
+            mensajeError &= "Debe seleccionar un rol.<br/>"
+        End If
+
+        If Not camposValidos Then
+            lblErrorModal.Text = mensajeError
+            lblErrorModal.Visible = True
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
+            Exit Sub
+        End If
+
+        Try
+            'Creamos el usuario primeramente
+            Dim usuario As New Usuarios() With {
+            .NombreUsuario = txtNombreUsuario.Text.Trim(),
+            .Contrasena = EncriptarCon(txtContrasena.Text.Trim()),
+            .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
+        }
+
+            Dim dbUser As New dbUsuarios()
+            dbUser.Create(usuario)
+
+            'obtenemos IdUsuario recién creado
+            Dim usuarioCreado As Usuarios = dbUser.GetByIdUsuarioPorNombre(usuario.NombreUsuario)
+            Dim idUsuario As Integer = usuarioCreado.IdUsuario
+
+            Dim paciente As New Pacientes() With {
+            .Nombre = txtNombre.Text.Trim(),
+            .Apellido1 = txtApellido1.Text.Trim(),
+            .Apellido2 = txtApellido2.Text.Trim(),
+            .Identificacion = txtIdentificacion.Text.Trim(),
+            .FechaNacimiento = Convert.ToDateTime(txtFechaNacimiento.Text.Trim()),
+            .Telefono = txtTelefono.Text.Trim(),
+            .Correo = txtCorreo.Text.Trim(),
+            .IdUsuario = idUsuario
+        }
+            'creamos el paciente con el IdUsuario
+            Dim dbPaciente As New dbPacientes()
+            dbPaciente.Create(paciente)
+            gvPacientes.DataBind()
+            LimpiarCampos()
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "cerrarModal", "$('#modalAgregar').modal('hide');", True)
+
+        Catch ex As Exception
+            lblErrorModal.Text = "Error al guardar: " & ex.Message
+            lblErrorModal.Visible = True
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
+        End Try
 
     End Sub
 
@@ -29,4 +121,30 @@
     Protected Sub gvPacientes_RowCommand(sender As Object, e As GridViewCommandEventArgs)
 
     End Sub
+
+    Private Function EncriptarCon(texto As String) As String
+        Using sha As SHA256 = SHA256.Create()
+            Dim bytes As Byte() = Encoding.UTF8.GetBytes(texto)
+            Dim hash As Byte() = sha.ComputeHash(bytes)
+            Dim sb As New StringBuilder()
+            For Each b As Byte In hash
+                sb.Append(b.ToString("x2"))
+            Next
+            Return sb.ToString()
+        End Using
+    End Function
+
+    Private Sub CargarRoles()
+        Try
+            Dim dbRol As New dbRoles()
+            ddlRol.DataSource = dbRol.GetRoles()
+            ddlRol.DataTextField = "NombreRol"
+            ddlRol.DataValueField = "IdRol"
+            ddlRol.DataBind()
+            ddlRol.Items.Insert(0, New ListItem("--Seleccione Rol--", "0"))
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
 End Class

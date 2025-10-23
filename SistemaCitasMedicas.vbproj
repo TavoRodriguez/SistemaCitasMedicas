@@ -145,6 +145,7 @@
     <Content Include="favicon.ico" />
     <Content Include="FormCitas.aspx" />
     <Content Include="FormDoctores.aspx" />
+    <Content Include="FormLogin.aspx" />
     <Content Include="FormPacientes.aspx" />
     <Content Include="FormUsuarios.aspx" />
     <Content Include="Global.asax" />
@@ -234,6 +235,13 @@
     </Compile>
     <Compile Include="FormDoctores.aspx.vb">
       <DependentUpon>FormDoctores.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="FormLogin.aspx.designer.vb">
+      <DependentUpon>FormLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FormLogin.aspx.vb">
+      <DependentUpon>FormLogin.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="FormPacientes.aspx.designer.vb">

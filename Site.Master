@@ -98,6 +98,7 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/FormPacientes">Pacientes</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/FormCitas">Citas</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/FormUsuarios">Usuarios</a></li>
+                         <li class="nav-item"><a class="nav-link" runat="server" href="~/FormLogin">Cerrar Sesión</a></li>
                     </ul>
                 </div>
             </div>

@@ -118,16 +118,26 @@
     End Sub
 
     Protected Sub gvDoctores_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
-        Try
-            Dim idDoctor As Integer = Convert.ToInt32(gvDoctores.DataKeys(e.RowIndex).Value)
-            Dim db As New dbDoctores()
-            db.Delete(idDoctor)
-            e.Cancel = True
-            gvDoctores.DataBind()
-        Catch ex As Exception
+        ' Evitar que SqlDataSource intente eliminar automáticamente
+        e.Cancel = True
 
-        End Try
+        Dim idDoctor As Integer = Convert.ToInt32(gvDoctores.DataKeys(e.RowIndex).Value)
+        Dim dbCitas As New dbCitas()
+        Dim dbDoctores As New dbDoctores()
+
+        ' Verificar si el doctor tiene citas
+        If dbCitas.CitasDoctores(idDoctor) Then
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alertaCita", "alert('El doctor tiene citas asignadas y no se puede eliminar.');", True)
+            Exit Sub
+        End If
+        ' Si no tiene citas, eliminar doctor
+        Dim resultado As String = dbDoctores.Delete(idDoctor)
+        If resultado.ToLower().Contains("error") Then
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alertaError", $"alert('{resultado}');", True)
+        End If
+        gvDoctores.DataBind()
     End Sub
+
 
     Protected Sub gvDoctores_RowCommand(sender As Object, e As GridViewCommandEventArgs)
         If e.CommandName = "EditarDoctor" Then

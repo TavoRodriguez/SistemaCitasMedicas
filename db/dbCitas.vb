@@ -130,5 +130,30 @@ Public Class dbCitas
         Return dt
     End Function
 
+    Public Function CitasPacientes(IdPaciente As Integer) As Boolean
+        Dim sql As String = "SELECT COUNT(*) FROM Citas WHERE IdPaciente=@IdPaciente"
+        Using connection As New SqlConnection(connectionString)
+            Using command As New SqlCommand(sql, connection)
+                command.Parameters.AddWithValue("@IdPaciente", IdPaciente)
+                connection.Open()
+                Dim count As Integer = Convert.ToInt32(command.ExecuteScalar())
+                Return count > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function CitasDoctores(IdDoctor As Integer) As Boolean
+        Dim sql As String = "SELECT COUNT(*) FROM Citas WHERE IdDoctor=@IdDoctor"
+        Using connection As New SqlConnection(connectionString)
+            Using command As New SqlCommand(sql, connection)
+                command.Parameters.AddWithValue("@IdDoctor", IdDoctor)
+                connection.Open()
+                Dim count As Integer = Convert.ToInt32(command.ExecuteScalar())
+                Return count > 0
+            End Using
+        End Using
+    End Function
+
+
 End Class
 

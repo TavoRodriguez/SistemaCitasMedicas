@@ -129,6 +129,7 @@ Public Class FormPacientes
         ddlRol.SelectedIndex = 0
         lblErrorModal.Visible = False
         editando.Value = ""
+        pnlCuentaUsuario.Visible = True
     End Sub
 
     Protected Sub gvPacientes_RowCommand(sender As Object, e As GridViewCommandEventArgs)
@@ -147,7 +148,6 @@ Public Class FormPacientes
 
             ' Ocultar campos de usuario al editar
             pnlCuentaUsuario.Visible = False
-
             editando.Value = idPaciente.ToString()
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
         Else
@@ -181,16 +181,28 @@ Public Class FormPacientes
     End Sub
 
     Protected Sub gvPacientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
-        Try
-            Dim idPaciente As Integer = Convert.ToInt32(gvPacientes.DataKeys(e.RowIndex).Value)
-            Dim db As New dbPacientes()
-            db.Delete(idPaciente)
+        ' Evitar que SqlDataSource intente eliminar automáticamente
+        e.Cancel = True
+
+        Dim idPaciente As Integer = Convert.ToInt32(gvPacientes.DataKeys(e.RowIndex).Value)
+        Dim dbCitas As New dbCitas()
+        Dim dbPacientes As New dbPacientes()
+
+        ' Verificar si el paciente tiene citas
+        If dbCitas.CitasPacientes(idPaciente) Then
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alertaCita", "alert('El paciente tiene citas asignadas y no se puede eliminar.');", True)
             e.Cancel = True
+            Exit Sub
+        End If
+        ' Eliminar si no tiene citas
+        Dim resultado As String = dbPacientes.Delete(idPaciente)
+        If resultado.ToLower().Contains("error") Then
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alertaError", $"alert('{resultado}');", True)
+            e.Cancel = True
+        Else
             gvPacientes.DataBind()
-        Catch ex As Exception
-            lblErrorModal.Text = "Error al eliminar: " & ex.Message
-            lblErrorModal.Visible = True
-        End Try
+        End If
     End Sub
+
 End Class
 

@@ -37,7 +37,7 @@ Public Class dbPacientes
     Public Function Update(Paciente As Pacientes) As String
         Try
             Dim sql As String = "UPDATE Pacientes SET Nombre=@Nombre, Apellido1=@Apellido1, Apellido2=@Apellido2, " &
-                                "Identificacion=@Identificacion, FechaNacimiento=@FechaNacimiento, Telefono=@Telefono, Correo=@Correo, IdUsuario=@IdUsuario " &
+                                "Identificacion=@Identificacion, FechaNacimiento=@FechaNacimiento, Telefono=@Telefono, Correo=@Correo " &
                                 "WHERE IdPaciente=@IdPaciente"
 
             Dim parametros As New List(Of SqlParameter) From {
@@ -48,7 +48,6 @@ Public Class dbPacientes
                 New SqlParameter("@FechaNacimiento", Paciente.FechaNacimiento),
                 New SqlParameter("@Telefono", Paciente.Telefono),
                 New SqlParameter("@Correo", Paciente.Correo),
-                New SqlParameter("@IdUsuario", Paciente.IdUsuario),
                 New SqlParameter("@IdPaciente", Paciente.IdPaciente)
             }
 

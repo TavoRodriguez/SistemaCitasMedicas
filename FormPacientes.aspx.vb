@@ -1,11 +1,12 @@
 ﻿Imports System.Security.Cryptography
 Imports System.Text
+
 Public Class FormPacientes
     Inherits System.Web.UI.Page
 
     Public Pacientes As Pacientes
     Protected dbPaciente As New dbPacientes()
-
+    Protected dbUsuario As New dbUsuarios()
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
             CargarRoles()
@@ -17,7 +18,7 @@ Public Class FormPacientes
         Dim camposValidos As Boolean = True
         Dim mensajeError As String = ""
 
-        ' validaciones del paciente
+        ' Validaciones de los datos del paciente
         If String.IsNullOrWhiteSpace(txtNombre.Text) Then
             camposValidos = False
             mensajeError &= "Debe ingresar el nombre.<br/>"
@@ -41,20 +42,22 @@ Public Class FormPacientes
             mensajeError &= "El correo electrónico no es válido.<br/>"
         End If
 
-        ' validaciones usuario
-        If String.IsNullOrWhiteSpace(txtNombreUsuario.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar el nombre de usuario.<br/>"
-        End If
+        ' Validaciones de los datos del usuario 
+        If String.IsNullOrEmpty(editando.Value) Then
+            If String.IsNullOrWhiteSpace(txtNombreUsuario.Text) Then
+                camposValidos = False
+                mensajeError &= "Debe ingresar el nombre de usuario.<br/>"
+            End If
 
-        If String.IsNullOrWhiteSpace(txtContrasena.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar la contraseña.<br/>"
-        End If
+            If String.IsNullOrWhiteSpace(txtContrasena.Text) Then
+                camposValidos = False
+                mensajeError &= "Debe ingresar la contraseña.<br/>"
+            End If
 
-        If ddlRol.SelectedValue = "0" Then
-            camposValidos = False
-            mensajeError &= "Debe seleccionar un rol.<br/>"
+            If ddlRol.SelectedValue = "0" Then
+                camposValidos = False
+                mensajeError &= "Debe seleccionar un rol.<br/>"
+            End If
         End If
 
         If Not camposValidos Then
@@ -65,20 +68,23 @@ Public Class FormPacientes
         End If
 
         Try
-            'Creamos el usuario primeramente
-            Dim usuario As New Usuarios() With {
-            .NombreUsuario = txtNombreUsuario.Text.Trim(),
-            .Contrasena = EncriptarCon(txtContrasena.Text.Trim()),
-            .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
-        }
+            Dim idUsuario As Integer = 0
 
-            Dim dbUser As New dbUsuarios()
-            dbUser.Create(usuario)
+            ' Se crea el usuario solo si se está agregando
+            If String.IsNullOrEmpty(editando.Value) Then
+                Dim usuario As New Usuarios() With {
+                .NombreUsuario = txtNombreUsuario.Text.Trim(),
+                .Contrasena = EncriptarCon(txtContrasena.Text.Trim()),
+                .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
+            }
+                dbUsuario.Create(usuario)
 
-            'obtenemos IdUsuario recién creado
-            Dim usuarioCreado As Usuarios = dbUser.GetByIdUsuarioPorNombre(usuario.NombreUsuario)
-            Dim idUsuario As Integer = usuarioCreado.IdUsuario
+                ' Guardamos el ID del usuario creado
+                Dim usuarioCreado As Usuarios = dbUsuario.GetByIdUsuarioPorNombre(usuario.NombreUsuario)
+                idUsuario = usuarioCreado.IdUsuario
+            End If
 
+            ' Crear o actualizar pacientes
             Dim paciente As New Pacientes() With {
             .Nombre = txtNombre.Text.Trim(),
             .Apellido1 = txtApellido1.Text.Trim(),
@@ -86,12 +92,18 @@ Public Class FormPacientes
             .Identificacion = txtIdentificacion.Text.Trim(),
             .FechaNacimiento = Convert.ToDateTime(txtFechaNacimiento.Text.Trim()),
             .Telefono = txtTelefono.Text.Trim(),
-            .Correo = txtCorreo.Text.Trim(),
-            .IdUsuario = idUsuario
+            .Correo = txtCorreo.Text.Trim()
         }
-            'creamos el paciente con el IdUsuario
-            Dim dbPaciente As New dbPacientes()
-            dbPaciente.Create(paciente)
+
+            ' Asociar usuario solo si se está agregando
+            If String.IsNullOrEmpty(editando.Value) Then
+                paciente.IdUsuario = idUsuario
+                dbPaciente.Create(paciente)
+            Else
+                paciente.IdPaciente = Convert.ToInt32(editando.Value)
+                dbPaciente.Update(paciente)
+            End If
+
             gvPacientes.DataBind()
             LimpiarCampos()
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "cerrarModal", "$('#modalAgregar').modal('hide');", True)
@@ -112,14 +124,36 @@ Public Class FormPacientes
         txtFechaNacimiento.Text = ""
         txtTelefono.Text = ""
         txtCorreo.Text = ""
-    End Sub
-
-    Protected Sub gvPacientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
-
+        txtNombreUsuario.Text = ""
+        txtContrasena.Text = ""
+        ddlRol.SelectedIndex = 0
+        lblErrorModal.Visible = False
+        editando.Value = ""
     End Sub
 
     Protected Sub gvPacientes_RowCommand(sender As Object, e As GridViewCommandEventArgs)
+        If e.CommandName = "EditarPaciente" Then
+            Dim idPaciente As Integer = Convert.ToInt32(e.CommandArgument)
+            Dim paciente As Pacientes = dbPaciente.GetById(idPaciente)
 
+            ' Cargar datos en modal
+            txtNombre.Text = paciente.Nombre
+            txtApellido1.Text = paciente.Apellido1
+            txtApellido2.Text = paciente.Apellido2
+            txtIdentificacion.Text = paciente.Identificacion
+            txtFechaNacimiento.Text = paciente.FechaNacimiento.ToString("yyyy-MM-dd")
+            txtTelefono.Text = paciente.Telefono
+            txtCorreo.Text = paciente.Correo
+
+            ' Ocultar campos de usuario al editar
+            pnlCuentaUsuario.Visible = False
+
+            editando.Value = idPaciente.ToString()
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
+        Else
+            ' Mostrar campos de usuario
+            pnlCuentaUsuario.Visible = True
+        End If
     End Sub
 
     Private Function EncriptarCon(texto As String) As String
@@ -143,8 +177,20 @@ Public Class FormPacientes
             ddlRol.DataBind()
             ddlRol.Items.Insert(0, New ListItem("--Seleccione Rol--", "0"))
         Catch ex As Exception
-
         End Try
     End Sub
 
+    Protected Sub gvPacientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
+        Try
+            Dim idPaciente As Integer = Convert.ToInt32(gvPacientes.DataKeys(e.RowIndex).Value)
+            Dim db As New dbPacientes()
+            db.Delete(idPaciente)
+            e.Cancel = True
+            gvPacientes.DataBind()
+        Catch ex As Exception
+            lblErrorModal.Text = "Error al eliminar: " & ex.Message
+            lblErrorModal.Visible = True
+        End Try
+    End Sub
 End Class
+

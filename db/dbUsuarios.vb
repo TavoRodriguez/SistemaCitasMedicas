@@ -7,27 +7,33 @@ Public Class dbUsuarios
     Public Function Create(Usuario As Usuarios) As String
         Try
             Dim sql As String = "INSERT INTO Usuarios (NombreUsuario, Contrasena, IdRol) " &
-                                "VALUES (@NombreUsuario, @Contrasena, @IdRol)"
+                            "OUTPUT INSERTED.IdUsuario VALUES (@NombreUsuario, @Contrasena, @IdRol)"
 
             Dim parametros As New List(Of SqlParameter) From {
-                New SqlParameter("@NombreUsuario", Usuario.NombreUsuario),
-                New SqlParameter("@Contrasena", Usuario.Contrasena),
-                New SqlParameter("@IdRol", Usuario.IdRol)
-            }
+            New SqlParameter("@NombreUsuario", Usuario.NombreUsuario),
+            New SqlParameter("@Contrasena", Usuario.Contrasena),
+            New SqlParameter("@IdRol", Usuario.IdRol)
+        }
+
+            Dim idGenerado As Integer = 0
 
             Using connection As New SqlConnection(connectionString)
                 Using command As New SqlCommand(sql, connection)
                     command.Parameters.AddRange(parametros.ToArray())
                     connection.Open()
-                    command.ExecuteNonQuery()
+                    idGenerado = Convert.ToInt32(command.ExecuteScalar())
                 End Using
             End Using
+
+            ' Guardamos el Id generado dentro del objeto que recibimos
+            Usuario.IdUsuario = idGenerado
 
             Return "Usuario creado correctamente"
         Catch ex As Exception
             Return "Error al crear usuario: " & ex.Message
         End Try
     End Function
+
 
     Public Function Update(Usuario As Usuarios) As String
         Try

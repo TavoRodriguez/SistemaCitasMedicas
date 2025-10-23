@@ -9,7 +9,7 @@
 
         </div>
 
-        <!-- Filtrado por Especialidad -->
+        <!-- Filtrar por especialidad -->
         <div class="mb-3">
             <label for="ddlEspecialidad" class="form-label fw-bold">Filtrar por Especialidad:</label>
             <asp:DropDownList ID="ddlEspecialidad" runat="server" CssClass="form-select w-50" AutoPostBack="True" OnSelectedIndexChanged="ddlEspecialidad_SelectedIndexChanged">
@@ -21,9 +21,9 @@
         <div class="table-responsive shadow-sm rounded">
             <asp:GridView ID="gvDoctores" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-hover align-middle"
                 EmptyDataText="No hay doctores registrados" GridLines="None" DataKeyNames="IdDoctor"
-                DataSourceID="SqlDataSourceDoctores" 
                 OnRowDeleting="gvDoctores_RowDeleting"
-                OnRowCommand ="gvDoctores_RowCommand">
+                OnRowCommand ="gvDoctores_RowCommand"
+                DataSourceID="SqlDataSourceDoctores">
                
                 
                 <Columns>

@@ -15,7 +15,7 @@
             <asp:GridView ID="gvPacientes" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-hover align-middle"
                 EmptyDataText="No hay pacientes registrados" GridLines="None" DataKeyNames="IdPaciente"
                 DataSourceID="SqlDataSourcePacientes"
-                OnRowDeleting="gvPacientes_RowDeleting"
+                OnRowDeleting ="gvPacientes_RowDeleting"
                 OnRowCommand="gvPacientes_RowCommand">
 
                 <Columns>
@@ -56,7 +56,7 @@
         SelectCommand="SELECT IdPaciente, Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo FROM Pacientes">
     </asp:SqlDataSource>
 
-   <!-- Modal Paciente -->
+   <!-- modal pacientes -->
 <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <!-- Campos Paciente -->
+                    <!-- campos para los datos del paciente -->
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
                         <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
@@ -109,24 +109,26 @@
 
                     <hr />
 
-                    <!-- Campos Usuario -->
-                    <h6>Cuenta de Usuario</h6>
+                    <!-- campos para los datos del usuario -->
+                    <asp:Panel ID="pnlCuentaUsuario" runat="server">
+                        <h6>Cuenta de Usuario</h6>
 
-                    <div class="mb-3">
-                        <label class="form-label">Nombre de Usuario</label>
-                        <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control" />
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de Usuario</label>
+                            <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Contraseña</label>
-                        <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password" />
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Rol</label>
-                        <asp:DropDownList ID="ddlRol" runat="server" CssClass="form-select">
-                        </asp:DropDownList>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <asp:DropDownList ID="ddlRol" runat="server" CssClass="form-select">
+                            </asp:DropDownList>
+                        </div>
+                    </asp:Panel>
 
                     <asp:Label ID="lblErrorModal" runat="server" CssClass="text-danger fw-bold" Visible="False"></asp:Label>
                 </div>

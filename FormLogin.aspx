@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="FormLogin.aspx.vb" Inherits="SistemaCitasMedicas.FormLogin" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head runat="server">
     <meta charset="utf-8" />
     <title>Login</title>

@@ -15,8 +15,8 @@
 
     Private Sub CargarEspecialidades()
         Try
-            Dim dbEsp As New dbEspecialidad()
-            ddlEspecialidadModal.DataSource = dbEsp.GetEspecialidades()
+            Dim dbEspecialidad As New dbEspecialidad()
+            ddlEspecialidadModal.DataSource = dbEspecialidad.GetEspecialidades()
             ddlEspecialidadModal.DataTextField = "NombreEspecialidad"
             ddlEspecialidadModal.DataValueField = "IdEspecialidad"
             ddlEspecialidadModal.DataBind()

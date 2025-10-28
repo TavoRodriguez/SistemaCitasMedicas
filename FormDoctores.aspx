@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Doctores" Language="vb" AutoEventWireup="false" MasterPageFile="~/Site.Master" CodeBehind="FormDoctores.aspx.vb" Inherits="SistemaCitasMedicas.FormDoctores" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:HiddenField ID="editando" runat="server" />
+    <asp:HiddenField ID="editando" runat="server" Value ="0"/>
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="text-primary">Lista de Doctores 🩺</h2>

@@ -1,107 +1,90 @@
-﻿Imports System.Security.Cryptography
+﻿Imports SistemaCitasMedicas.Utils
+Imports System.Security.Cryptography
 Imports System.Text
 
 Public Class FormPacientes
     Inherits System.Web.UI.Page
 
-    Public Pacientes As Pacientes
+    Public Paciente As Pacientes
     Protected dbPaciente As New dbPacientes()
     Protected dbUsuario As New dbUsuarios()
+
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
             CargarRoles()
         End If
     End Sub
 
+    Private Sub CargarRoles()
+        Try
+            Dim dbRol As New dbRoles()
+            ddlRol.DataSource = dbRol.GetRoles()
+            ddlRol.DataTextField = "NombreRol"
+            ddlRol.DataValueField = "IdRol"
+            ddlRol.DataBind()
+            ddlRol.Items.Insert(0, New ListItem("--Seleccione Rol--", "0"))
+        Catch ex As Exception
+            ShowSwalMessage(Me, "Error", "Error al cargar los roles.", "error")
+        End Try
+    End Sub
+
     Protected Sub btnGuardar_Click(sender As Object, e As EventArgs) Handles btnGuardar.Click
-
-        Dim camposValidos As Boolean = True
-        Dim mensajeError As String = ""
-
-        ' Validaciones de los datos del paciente
-        If String.IsNullOrWhiteSpace(txtNombre.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar el nombre.<br/>"
-        End If
-
-        If String.IsNullOrWhiteSpace(txtApellido1.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar el primer apellido.<br/>"
-        End If
-
-        If String.IsNullOrWhiteSpace(txtTelefono.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar el teléfono.<br/>"
-        End If
-
-        If String.IsNullOrWhiteSpace(txtCorreo.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar el correo electrónico.<br/>"
-        ElseIf Not txtCorreo.Text.Contains("@") OrElse Not txtCorreo.Text.Contains(".") Then
-            camposValidos = False
-            mensajeError &= "El correo electrónico no es válido.<br/>"
-        End If
-
-        ' Validaciones de los datos del usuario 
-        If String.IsNullOrEmpty(editando.Value) Then
-            If String.IsNullOrWhiteSpace(txtNombreUsuario.Text) Then
-                camposValidos = False
-                mensajeError &= "Debe ingresar el nombre de usuario.<br/>"
-            End If
-
-            If String.IsNullOrWhiteSpace(txtContrasena.Text) Then
-                camposValidos = False
-                mensajeError &= "Debe ingresar la contraseña.<br/>"
-            End If
-
-            If ddlRol.SelectedValue = "0" Then
-                camposValidos = False
-                mensajeError &= "Debe seleccionar un rol.<br/>"
-            End If
-        End If
-
-        If Not camposValidos Then
-            lblErrorModal.Text = mensajeError
-            lblErrorModal.Visible = True
+        ' Validaciones
+        If txtNombre.Text = "" Or txtApellido1.Text = "" Or txtTelefono.Text = "" Or txtCorreo.Text = "" Then
+            ShowSwalMessage(Me, "Error", "Por favor, complete todos los campos requeridos.", "error")
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
-            Exit Sub
+            Return
+        End If
+
+        If Not txtCorreo.Text.Contains("@") OrElse Not txtCorreo.Text.Contains(".") Then
+            ShowSwalMessage(Me, "Error", "El correo electrónico no es válido.", "error")
+            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
+            Return
+        End If
+
+        ' Validar usuario solo si estamos agregando
+        If editando.Value = "0" Then
+            If txtNombreUsuario.Text = "" Or txtContrasena.Text = "" Or ddlRol.SelectedValue = "0" Then
+                ShowSwalMessage(Me, "Error", "Por favor, complete todos los campos de usuario.", "error")
+                ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
+                Return
+            End If
         End If
 
         Try
             Dim idUsuario As Integer = 0
 
-            ' Se crea el usuario solo si se está agregando
-            If String.IsNullOrEmpty(editando.Value) Then
+            ' Crear usuario solo si editando.Value = "0"
+            If editando.Value = "0" Then
                 Dim usuario As New Usuarios() With {
-                .NombreUsuario = txtNombreUsuario.Text.Trim(),
-                .Contrasena = EncriptarCon(txtContrasena.Text.Trim()),
-                .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
-            }
+                    .NombreUsuario = txtNombreUsuario.Text.Trim(),
+                    .Contrasena = EncriptarCon(txtContrasena.Text.Trim()),
+                    .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
+                }
                 dbUsuario.Create(usuario)
-
-                ' Guardamos el ID del usuario creado
                 Dim usuarioCreado As Usuarios = dbUsuario.GetByIdUsuarioPorNombre(usuario.NombreUsuario)
                 idUsuario = usuarioCreado.IdUsuario
             End If
 
-            ' Crear o actualizar pacientes
+            ' Crear o actualizar paciente
             Dim paciente As New Pacientes() With {
-            .Nombre = txtNombre.Text.Trim(),
-            .Apellido1 = txtApellido1.Text.Trim(),
-            .Apellido2 = txtApellido2.Text.Trim(),
-            .Identificacion = txtIdentificacion.Text.Trim(),
-            .FechaNacimiento = Convert.ToDateTime(txtFechaNacimiento.Text.Trim()),
-            .Telefono = txtTelefono.Text.Trim(),
-            .Correo = txtCorreo.Text.Trim()
-        }
+                .Nombre = txtNombre.Text.Trim(),
+                .Apellido1 = txtApellido1.Text.Trim(),
+                .Apellido2 = txtApellido2.Text.Trim(),
+                .Identificacion = txtIdentificacion.Text.Trim(),
+                .FechaNacimiento = Convert.ToDateTime(txtFechaNacimiento.Text.Trim()),
+                .Telefono = txtTelefono.Text.Trim(),
+                .Correo = txtCorreo.Text.Trim()
+            }
 
-            ' Asociar usuario solo si se está agregando
-            If String.IsNullOrEmpty(editando.Value) Then
+            If editando.Value = "0" Then
                 paciente.IdUsuario = idUsuario
                 dbPaciente.Create(paciente)
+                ShowSwalMessage(Me, "Éxito", "Paciente agregado correctamente.", "success")
             Else
                 paciente.IdPaciente = Convert.ToInt32(editando.Value)
                 dbPaciente.Update(paciente)
+                ShowSwalMessage(Me, "Actualizado", "Datos del paciente actualizados correctamente.", "success")
             End If
 
             gvPacientes.DataBind()
@@ -109,11 +92,9 @@ Public Class FormPacientes
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "cerrarModal", "$('#modalAgregar').modal('hide');", True)
 
         Catch ex As Exception
-            lblErrorModal.Text = "Error al guardar: " & ex.Message
-            lblErrorModal.Visible = True
+            ShowSwalMessage(Me, "Error", "Error al guardar: " & ex.Message, "error")
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
         End Try
-
     End Sub
 
     Private Sub LimpiarCampos()
@@ -127,8 +108,7 @@ Public Class FormPacientes
         txtNombreUsuario.Text = ""
         txtContrasena.Text = ""
         ddlRol.SelectedIndex = 0
-        lblErrorModal.Visible = False
-        editando.Value = ""
+        editando.Value = "0"
         pnlCuentaUsuario.Visible = True
     End Sub
 
@@ -137,7 +117,6 @@ Public Class FormPacientes
             Dim idPaciente As Integer = Convert.ToInt32(e.CommandArgument)
             Dim paciente As Pacientes = dbPaciente.GetById(idPaciente)
 
-            ' Cargar datos en modal
             txtNombre.Text = paciente.Nombre
             txtApellido1.Text = paciente.Apellido1
             txtApellido2.Text = paciente.Apellido2
@@ -146,13 +125,31 @@ Public Class FormPacientes
             txtTelefono.Text = paciente.Telefono
             txtCorreo.Text = paciente.Correo
 
-            ' Ocultar campos de usuario al editar
             pnlCuentaUsuario.Visible = False
             editando.Value = idPaciente.ToString()
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
         Else
-            ' Mostrar campos de usuario
             pnlCuentaUsuario.Visible = True
+        End If
+    End Sub
+
+    Protected Sub gvPacientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
+        e.Cancel = True
+        Dim idPaciente As Integer = Convert.ToInt32(gvPacientes.DataKeys(e.RowIndex).Value)
+        Dim dbCitas As New dbCitas()
+        Dim dbPacientes As New dbPacientes()
+
+        If dbCitas.CitasPacientes(idPaciente) Then
+            ShowSwalMessage(Me, "Atención", "El paciente tiene citas asignadas y no se puede eliminar.", "warning")
+            Exit Sub
+        End If
+
+        Dim resultado As String = dbPacientes.Delete(idPaciente)
+        If resultado.ToLower().Contains("error") Then
+            ShowSwalMessage(Me, "Error", resultado, "error")
+        Else
+            ShowSwalMessage(Me, "Eliminado", "El paciente fue eliminado correctamente.", "success")
+            gvPacientes.DataBind()
         End If
     End Sub
 
@@ -168,41 +165,6 @@ Public Class FormPacientes
         End Using
     End Function
 
-    Private Sub CargarRoles()
-        Try
-            Dim dbRol As New dbRoles()
-            ddlRol.DataSource = dbRol.GetRoles()
-            ddlRol.DataTextField = "NombreRol"
-            ddlRol.DataValueField = "IdRol"
-            ddlRol.DataBind()
-            ddlRol.Items.Insert(0, New ListItem("--Seleccione Rol--", "0"))
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    Protected Sub gvPacientes_RowDeleting(sender As Object, e As GridViewDeleteEventArgs)
-        ' Evitar que SqlDataSource intente eliminar automáticamente
-        e.Cancel = True
-
-        Dim idPaciente As Integer = Convert.ToInt32(gvPacientes.DataKeys(e.RowIndex).Value)
-        Dim dbCitas As New dbCitas()
-        Dim dbPacientes As New dbPacientes()
-
-        ' Verificar si el paciente tiene citas
-        If dbCitas.CitasPacientes(idPaciente) Then
-            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alertaCita", "alert('El paciente tiene citas asignadas y no se puede eliminar.');", True)
-            e.Cancel = True
-            Exit Sub
-        End If
-        ' Eliminar si no tiene citas
-        Dim resultado As String = dbPacientes.Delete(idPaciente)
-        If resultado.ToLower().Contains("error") Then
-            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "alertaError", $"alert('{resultado}');", True)
-            e.Cancel = True
-        Else
-            gvPacientes.DataBind()
-        End If
-    End Sub
-
 End Class
+
 

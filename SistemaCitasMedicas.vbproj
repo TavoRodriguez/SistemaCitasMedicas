@@ -235,7 +235,7 @@
     </Compile>
     <Compile Include="FormDoctores.aspx.vb">
       <DependentUpon>FormDoctores.aspx</DependentUpon>
-      <SubType>ASPXCodebehind</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="FormLogin.aspx.designer.vb">
       <DependentUpon>FormLogin.aspx</DependentUpon>
@@ -291,6 +291,7 @@
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Utils\SweetUtils.vb" />
     <Compile Include="ViewSwitcher.ascx.vb">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

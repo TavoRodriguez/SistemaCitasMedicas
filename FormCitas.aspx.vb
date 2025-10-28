@@ -1,5 +1,7 @@
-﻿Imports System.Text
+﻿Imports SistemaCitasMedicas.Utils
+Imports System.Text
 Imports System.Data
+
 Public Class FormCitas
     Inherits System.Web.UI.Page
 
@@ -10,6 +12,7 @@ Public Class FormCitas
             CargarCitas()
         End If
     End Sub
+
     Private Sub CargarPacientes()
         Dim Paciente As New dbPacientes()
         ddlPaciente.DataSource = Paciente.GetPacientes()
@@ -18,6 +21,7 @@ Public Class FormCitas
         ddlPaciente.DataBind()
         ddlPaciente.Items.Insert(0, New ListItem("--Seleccione Paciente--", "0"))
     End Sub
+
     Private Sub CargarDoctores()
         Dim Doctor As New dbDoctores()
         ddlDoctor.DataSource = Doctor.GetDoctores()
@@ -26,6 +30,7 @@ Public Class FormCitas
         ddlDoctor.DataBind()
         ddlDoctor.Items.Insert(0, New ListItem("--Seleccione Doctor--", "0"))
     End Sub
+
     Private Sub CargarCitas(Optional ByVal estado As String = "")
         Dim dbCitas As New dbCitas()
         Dim citas As DataTable = dbCitas.GetCitas(estado)
@@ -52,41 +57,18 @@ Public Class FormCitas
 
         citasContainer.InnerHtml = html.ToString()
     End Sub
+
     Protected Sub ddlEstado_SelectedIndexChanged(sender As Object, e As EventArgs)
         Dim estadoSeleccionado As String = ddlEstado.SelectedValue
         CargarCitas(estadoSeleccionado)
     End Sub
 
     Protected Sub btnGuardar_Click(sender As Object, e As EventArgs) Handles btnGuardar.Click
-
-        Dim camposValidos As Boolean = True
-        Dim mensajeError As String = ""
-
-        If ddlPaciente.SelectedValue = "0" Then
-            camposValidos = False
-            mensajeError &= "Debe seleccionar un paciente.<br/>"
-        End If
-
-        If ddlDoctor.SelectedValue = "0" Then
-            camposValidos = False
-            mensajeError &= "Debe seleccionar un doctor.<br/>"
-        End If
-
-        If String.IsNullOrWhiteSpace(txtFechaCita.Text) Then
-            camposValidos = False
-            mensajeError &= "Debe ingresar la fecha y hora de la cita.<br/>"
-        End If
-
-        If ddlEstadoModal.SelectedValue = "" Then
-            camposValidos = False
-            mensajeError &= "Debe seleccionar un estado.<br/>"
-        End If
-
-        If Not camposValidos Then
-            lblErrorModal.Text = mensajeError
-            lblErrorModal.Visible = True
+        ' Validaciones
+        If ddlPaciente.SelectedValue = "0" Or ddlDoctor.SelectedValue = "0" Or String.IsNullOrWhiteSpace(txtFechaCita.Text) Or ddlEstadoModal.SelectedValue = "" Then
+            ShowSwalMessage(Me, "Error", "Por favor, complete todos los campos requeridos.", "error")
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
-            Exit Sub
+            Return
         End If
 
         Dim cita As New Citas() With {
@@ -100,11 +82,13 @@ Public Class FormCitas
         Try
             Dim dbCita As New dbCitas()
 
-            If String.IsNullOrEmpty(editando.Value) Then
+            If editando.Value = "0" Then
                 dbCita.Create(cita)
+                ShowSwalMessage(Me, "Éxito", "Cita agregada correctamente.", "success")
             Else
                 cita.IdCita = Convert.ToInt32(editando.Value)
                 dbCita.Update(cita)
+                ShowSwalMessage(Me, "Actualizado", "Cita actualizada correctamente.", "success")
             End If
 
             CargarCitas()
@@ -112,11 +96,9 @@ Public Class FormCitas
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "cerrarModal", "$('#modalAgregar').modal('hide');", True)
 
         Catch ex As Exception
-            lblErrorModal.Text = "Error al guardar la cita: " & ex.Message
-            lblErrorModal.Visible = True
+            ShowSwalMessage(Me, "Error", "Error al guardar la cita: " & ex.Message, "error")
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
         End Try
-
     End Sub
 
     Private Sub LimpiarCampos()
@@ -125,9 +107,7 @@ Public Class FormCitas
         txtFechaCita.Text = ""
         ddlEstadoModal.SelectedValue = "Pendiente"
         txtObservaciones.Text = ""
-        editando.Value = ""
-        lblErrorModal.Visible = False
+        editando.Value = "0"
     End Sub
-
 
 End Class

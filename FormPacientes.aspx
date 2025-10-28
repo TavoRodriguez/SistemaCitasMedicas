@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Pacientes" Language="vb" AutoEventWireup="false" MasterPageFile="~/Site.Master" CodeBehind="FormPacientes.aspx.vb" Inherits="SistemaCitasMedicas.FormPacientes" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:HiddenField ID="editando" runat="server" />
+    <asp:HiddenField ID="editando" runat="server" Value ="0" />
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">

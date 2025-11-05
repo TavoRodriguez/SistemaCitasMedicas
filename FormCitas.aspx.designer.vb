@@ -41,13 +41,22 @@ Partial Public Class FormCitas
     Protected WithEvents ddlEstado As Global.System.Web.UI.WebControls.DropDownList
 
     '''<summary>
-    '''Control citasContainer.
+    '''Control gvCitas.
     '''</summary>
     '''<remarks>
     '''Campo generado automáticamente.
     '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
     '''</remarks>
-    Protected WithEvents citasContainer As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    Protected WithEvents gvCitas As Global.System.Web.UI.WebControls.GridView
+
+    '''<summary>
+    '''Control SqlDataSourceCitas.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents SqlDataSourceCitas As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''Control pnlAgregar.

@@ -18,4 +18,20 @@ Public Class dbRoles
         End Try
         Return dt
     End Function
+
+    Public Function GetRolesTodos() As DataTable
+        Dim dt As New DataTable()
+        Try
+            Using con As New SqlConnection(connectionString)
+                Using cmd As New SqlCommand("SELECT IdRol, NombreRol FROM Roles ", con)
+                    con.Open()
+                    Dim reader As SqlDataReader = cmd.ExecuteReader()
+                    dt.Load(reader)
+                End Using
+            End Using
+        Catch ex As Exception
+            Throw New Exception("Error al cargar los roles: " & ex.Message)
+        End Try
+        Return dt
+    End Function
 End Class

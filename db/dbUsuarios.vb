@@ -10,10 +10,10 @@ Public Class dbUsuarios
                             "OUTPUT INSERTED.IdUsuario VALUES (@NombreUsuario, @Contrasena, @IdRol)"
 
             Dim parametros As New List(Of SqlParameter) From {
-            New SqlParameter("@NombreUsuario", Usuario.NombreUsuario),
-            New SqlParameter("@Contrasena", Usuario.Contrasena),
-            New SqlParameter("@IdRol", Usuario.IdRol)
-        }
+                New SqlParameter("@NombreUsuario", Usuario.NombreUsuario),
+                New SqlParameter("@Contrasena", Usuario.Contrasena),
+                New SqlParameter("@IdRol", Usuario.IdRol)
+            }
 
             Dim idGenerado As Integer = 0
 
@@ -33,7 +33,6 @@ Public Class dbUsuarios
             Return "Error al crear usuario: " & ex.Message
         End Try
     End Function
-
 
     Public Function Update(Usuario As Usuarios) As String
         Try
@@ -105,26 +104,33 @@ Public Class dbUsuarios
         End Try
     End Function
 
-
-    Public Function GetUsuarios() As DataTable
-        Dim dt As New DataTable()
+    Public Function GetById(IdUsuario As Integer) As Usuarios
+        Dim usuario As New Usuarios()
         Try
-            Dim sql As String = "SELECT IdUsuario, NombreUsuario FROM Usuarios ORDER BY NombreUsuario"
+            Dim sql As String = "SELECT IdUsuario, NombreUsuario, Contrasena, IdRol FROM Usuarios WHERE IdUsuario = @IdUsuario"
 
             Using connection As New SqlConnection(connectionString)
                 Using command As New SqlCommand(sql, connection)
+                    command.Parameters.Add(New SqlParameter("@IdUsuario", IdUsuario))
                     connection.Open()
                     Using reader As SqlDataReader = command.ExecuteReader()
-                        dt.Load(reader)
+                        If reader.Read() Then
+                            usuario.IdUsuario = Convert.ToInt32(reader("IdUsuario"))
+                            usuario.NombreUsuario = reader("NombreUsuario").ToString()
+                            usuario.Contrasena = reader("Contrasena").ToString()
+                            usuario.IdRol = Convert.ToInt32(reader("IdRol"))
+                        End If
                     End Using
                 End Using
             End Using
 
-            Return dt
+            Return usuario
         Catch ex As Exception
-            Throw New Exception("Error al cargar usuarios: " & ex.Message)
+            Throw New Exception("Error al obtener usuario: " & ex.Message)
         End Try
     End Function
 
+
 End Class
+
 

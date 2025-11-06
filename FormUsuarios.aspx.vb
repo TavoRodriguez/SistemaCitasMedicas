@@ -16,7 +16,6 @@ Public Class FormUsuarios
         End If
     End Sub
 
-    ' ===== CARGAR ROLES =====
     Private Sub CargarRoles()
         Try
             Dim dbRol As New dbRoles()
@@ -43,7 +42,6 @@ Public Class FormUsuarios
         End Try
     End Sub
 
-    ' ===== GUARDAR USUARIO =====
     Protected Sub btnGuardar_Click(sender As Object, e As EventArgs) Handles btnGuardar.Click
         ' Validaciones
         If txtNombreUsuario.Text = "" Or ddlRol.SelectedValue = "0" Then
@@ -110,7 +108,6 @@ Public Class FormUsuarios
         End Try
     End Sub
 
-    ' ===== LIMPIAR CAMPOS =====
     Private Sub LimpiarCampos()
         txtNombreUsuario.Text = ""
         txtContrasena.Text = ""
@@ -118,11 +115,11 @@ Public Class FormUsuarios
         editando.Value = "0"
     End Sub
 
-    ' ===== GRIDVIEW COMANDOS =====
     Protected Sub gvUsuarios_RowCommand(sender As Object, e As GridViewCommandEventArgs)
         If e.CommandName = "EditarUsuario" Then
             Dim idUsuario As Integer = Convert.ToInt32(e.CommandArgument)
-            Dim usuario As Usuarios = dbUsuario.GetByIdUsuarioPorNombre(gvUsuarios.Rows(e.CommandArgument).Cells(1).Text)
+            Dim usuario As Usuarios = dbUsuario.GetById(idUsuario)
+
 
             txtNombreUsuario.Text = usuario.NombreUsuario
             ddlRol.SelectedValue = usuario.IdRol
@@ -150,7 +147,6 @@ Public Class FormUsuarios
         End Try
     End Sub
 
-    ' ===== ENCRIPTAR CONTRASEÑA =====
     Private Function EncriptarCon(texto As String) As String
         Using sha As SHA256 = SHA256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(texto)
@@ -164,6 +160,6 @@ Public Class FormUsuarios
     End Function
 
     Protected Sub ddlRolFiltro_SelectedIndexChanged(sender As Object, e As EventArgs)
-
+        gvUsuarios.DataBind()
     End Sub
 End Class

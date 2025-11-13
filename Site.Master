@@ -93,12 +93,15 @@
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/FormDoctores">Doctores</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/FormPacientes">Pacientes</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/FormCitas">Citas</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/FormUsuarios">Usuarios</a></li>
-                         <li class="nav-item"><a class="nav-link" runat="server" href="~/FormLogin">Cerrar Sesión</a></li>
+                        <li id="liInicio" runat="server" class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
+                        <li id="liDoctores" runat="server" class="nav-item"><a class="nav-link" runat="server" href="~/FormDoctores">Doctores</a></li>
+                        <li id="liPacientes" runat="server" class="nav-item"><a class="nav-link" runat="server" href="~/FormPacientes">Pacientes</a></li>
+                        <li id="liCitas" runat="server" class="nav-item"><a class="nav-link" runat="server" href="~/FormCitas">Citas</a></li>
+                        <li id="liUsuarios" runat="server" class="nav-item"><a class="nav-link" runat="server" href="~/FormUsuarios">Usuarios</a></li>
+                        <li id="liCerrar" runat="server" class="nav-item">
+                            <a id="aCerrar" runat="server" class="nav-link" href="#" onserverclick="aCerrar_ServerClick1">Cerrar Sesión</a>
+                        </li>
+
                     </ul>
                 </div>
             </div>

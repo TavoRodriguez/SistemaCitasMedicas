@@ -130,6 +130,35 @@ Public Class dbUsuarios
         End Try
     End Function
 
+    Public Function AutenticarUsuario(NombreUsuario As String, ContrasenaEncriptada As String) As Usuarios
+        Dim usuario As New Usuarios()
+        Try
+            Dim sql As String = "SELECT IdUsuario, NombreUsuario, Contrasena, IdRol FROM Usuarios " &
+                            "WHERE NombreUsuario=@NombreUsuario AND Contrasena=@Contrasena"
+
+            Using connection As New SqlConnection(connectionString)
+                Using command As New SqlCommand(sql, connection)
+                    command.Parameters.AddWithValue("@NombreUsuario", NombreUsuario)
+                    command.Parameters.AddWithValue("@Contrasena", ContrasenaEncriptada)
+                    connection.Open()
+                    Using reader As SqlDataReader = command.ExecuteReader()
+                        If reader.Read() Then
+                            usuario.IdUsuario = Convert.ToInt32(reader("IdUsuario"))
+                            usuario.NombreUsuario = reader("NombreUsuario").ToString()
+                            usuario.Contrasena = reader("Contrasena").ToString()
+                            usuario.IdRol = Convert.ToInt32(reader("IdRol"))
+                        End If
+                    End Using
+                End Using
+            End Using
+
+            Return usuario
+        Catch ex As Exception
+            Throw New Exception("Error al autenticar usuario: " & ex.Message)
+        End Try
+    End Function
+
+
 
 End Class
 

@@ -23,7 +23,8 @@
                 EmptyDataText="No hay doctores registrados" GridLines="None" DataKeyNames="IdDoctor"
                 OnRowDeleting="gvDoctores_RowDeleting"
                 OnRowCommand ="gvDoctores_RowCommand"
-                DataSourceID="SqlDataSourceDoctores">
+                DataSourceID="SqlDataSourceDoctores"
+                OnRowDataBound ="gvDoctores_RowDataBound">
                
                 
                 <Columns>
@@ -49,8 +50,10 @@
                             <asp:LinkButton ID="btnEliminar" runat="server"
                                 CssClass="btn btn-sm btn-danger"
                                 CommandName="Delete"
-                                CommandArgument='<%# Eval("IdDoctor") %>'
-                                OnClientClick="return confirm('¿Está seguro de eliminar este doctor?');">Eliminar</asp:LinkButton>
+                                CommandArgument='<%# Eval("IdDoctor") %>'>
+                                Eliminar
+                            </asp:LinkButton>
+
                         </ItemTemplate>
                     </asp:TemplateField>
 

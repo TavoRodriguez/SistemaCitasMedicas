@@ -2,64 +2,63 @@
 
 Public Class dbPacientes
 
-    Public ReadOnly connectionString As String = ConfigurationManager.ConnectionStrings("CitasMedicasDBConnectionString2").ConnectionString
+    Private ReadOnly dbHelper As New DatabaseHelper()
 
-    Public Function Create(Paciente As Pacientes) As String
+    Public Function Create(paciente As Pacientes) As String
         Try
-            Dim sql As String = "INSERT INTO Pacientes (Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo, IdUsuario) " &
-                                "VALUES (@Nombre, @Apellido1, @Apellido2, @Identificacion, @FechaNacimiento, @Telefono, @Correo, @IdUsuario)"
+            Dim sql As String = "
+                INSERT INTO Pacientes (Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo)
+                VALUES (@Nombre, @Apellido1, @Apellido2, @Identificacion, @FechaNacimiento, @Telefono, @Correo)
+            "
 
             Dim parametros As New List(Of SqlParameter) From {
-                New SqlParameter("@Nombre", Paciente.Nombre),
-                New SqlParameter("@Apellido1", Paciente.Apellido1),
-                New SqlParameter("@Apellido2", Paciente.Apellido2),
-                New SqlParameter("@Identificacion", Paciente.Identificacion),
-                New SqlParameter("@FechaNacimiento", Paciente.FechaNacimiento),
-                New SqlParameter("@Telefono", Paciente.Telefono),
-                New SqlParameter("@Correo", Paciente.Correo),
-                New SqlParameter("@IdUsuario", Paciente.IdUsuario)
+                dbHelper.CreateParameter("@Nombre", paciente.Nombre),
+                dbHelper.CreateParameter("@Apellido1", paciente.Apellido1),
+                dbHelper.CreateParameter("@Apellido2", paciente.Apellido2),
+                dbHelper.CreateParameter("@Identificacion", paciente.Identificacion),
+                dbHelper.CreateParameter("@FechaNacimiento", paciente.FechaNacimiento),
+                dbHelper.CreateParameter("@Telefono", paciente.Telefono),
+                dbHelper.CreateParameter("@Correo", paciente.Correo)
             }
 
-            Using connection As New SqlConnection(connectionString)
-                Using command As New SqlCommand(sql, connection)
-                    command.Parameters.AddRange(parametros.ToArray())
-                    connection.Open()
-                    command.ExecuteNonQuery()
-                End Using
-            End Using
+            dbHelper.ExecuteNonQuery(sql, parametros)
 
             Return "Paciente creado correctamente"
+
         Catch ex As Exception
             Return "Error al crear paciente: " & ex.Message
         End Try
     End Function
 
-    Public Function Update(Paciente As Pacientes) As String
+    Public Function Update(paciente As Pacientes) As String
         Try
-            Dim sql As String = "UPDATE Pacientes SET Nombre=@Nombre, Apellido1=@Apellido1, Apellido2=@Apellido2, " &
-                                "Identificacion=@Identificacion, FechaNacimiento=@FechaNacimiento, Telefono=@Telefono, Correo=@Correo " &
-                                "WHERE IdPaciente=@IdPaciente"
+            Dim sql As String = "
+                UPDATE Pacientes SET
+                    Nombre=@Nombre,
+                    Apellido1=@Apellido1,
+                    Apellido2=@Apellido2,
+                    Identificacion=@Identificacion,
+                    FechaNacimiento=@FechaNacimiento,
+                    Telefono=@Telefono,
+                    Correo=@Correo
+                WHERE IdPaciente=@IdPaciente
+            "
 
             Dim parametros As New List(Of SqlParameter) From {
-                New SqlParameter("@Nombre", Paciente.Nombre),
-                New SqlParameter("@Apellido1", Paciente.Apellido1),
-                New SqlParameter("@Apellido2", Paciente.Apellido2),
-                New SqlParameter("@Identificacion", Paciente.Identificacion),
-                New SqlParameter("@FechaNacimiento", Paciente.FechaNacimiento),
-                New SqlParameter("@Telefono", Paciente.Telefono),
-                New SqlParameter("@Correo", Paciente.Correo),
-                New SqlParameter("@IdPaciente", Paciente.IdPaciente)
+                dbHelper.CreateParameter("@Nombre", paciente.Nombre),
+                dbHelper.CreateParameter("@Apellido1", paciente.Apellido1),
+                dbHelper.CreateParameter("@Apellido2", paciente.Apellido2),
+                dbHelper.CreateParameter("@Identificacion", paciente.Identificacion),
+                dbHelper.CreateParameter("@FechaNacimiento", paciente.FechaNacimiento),
+                dbHelper.CreateParameter("@Telefono", paciente.Telefono),
+                dbHelper.CreateParameter("@Correo", paciente.Correo),
+                dbHelper.CreateParameter("@IdPaciente", paciente.IdPaciente)
             }
 
-            Using connection As New SqlConnection(connectionString)
-                Using command As New SqlCommand(sql, connection)
-                    command.Parameters.AddRange(parametros.ToArray())
-                    connection.Open()
-                    command.ExecuteNonQuery()
-                End Using
-            End Using
+            dbHelper.ExecuteNonQuery(sql, parametros)
 
             Return "Paciente actualizado correctamente"
+
         Catch ex As Exception
             Return "Error al actualizar paciente: " & ex.Message
         End Try
@@ -69,71 +68,70 @@ Public Class dbPacientes
         Try
             Dim sql As String = "DELETE FROM Pacientes WHERE IdPaciente=@IdPaciente"
 
-            Using connection As New SqlConnection(connectionString)
-                Using command As New SqlCommand(sql, connection)
-                    command.Parameters.AddWithValue("@IdPaciente", IdPaciente)
-                    connection.Open()
-                    command.ExecuteNonQuery()
-                End Using
-            End Using
+            Dim parametros As New List(Of SqlParameter) From {
+                dbHelper.CreateParameter("@IdPaciente", IdPaciente)
+            }
+
+            dbHelper.ExecuteNonQuery(sql, parametros)
 
             Return "Paciente eliminado correctamente"
+
         Catch ex As Exception
             Return "Error al eliminar paciente: " & ex.Message
         End Try
     End Function
 
     Public Function GetById(IdPaciente As Integer) As Pacientes
-        Dim paciente As New Pacientes()
         Try
-            Dim sql As String = "SELECT IdPaciente, Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo, IdUsuario " &
-                                "FROM Pacientes WHERE IdPaciente = @IdPaciente"
+            Dim sql As String = "
+                SELECT IdPaciente, Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo
+                FROM Pacientes
+                WHERE IdPaciente = @IdPaciente
+            "
 
-            Using connection As New SqlConnection(connectionString)
-                Using command As New SqlCommand(sql, connection)
-                    command.Parameters.Add(New SqlParameter("@IdPaciente", IdPaciente))
-                    connection.Open()
-                    Using reader As SqlDataReader = command.ExecuteReader()
-                        If reader.Read() Then
-                            paciente.IdPaciente = Convert.ToInt32(reader("IdPaciente"))
-                            paciente.Nombre = reader("Nombre").ToString()
-                            paciente.Apellido1 = reader("Apellido1").ToString()
-                            paciente.Apellido2 = reader("Apellido2").ToString()
-                            paciente.Identificacion = reader("Identificacion").ToString()
-                            paciente.FechaNacimiento = Convert.ToDateTime(reader("FechaNacimiento"))
-                            paciente.Telefono = reader("Telefono").ToString()
-                            paciente.Correo = reader("Correo").ToString()
-                            paciente.IdUsuario = Convert.ToInt32(reader("IdUsuario"))
-                        End If
-                    End Using
-                End Using
-            End Using
+            Dim parametros As New List(Of SqlParameter) From {
+                dbHelper.CreateParameter("@IdPaciente", IdPaciente)
+            }
+
+            Dim dt As DataTable = dbHelper.ExecuteQuery(sql, parametros)
+            If dt.Rows.Count = 0 Then Return Nothing
+
+            Dim row = dt.Rows(0)
+
+            Dim paciente As New Pacientes With {
+                .IdPaciente = Convert.ToInt32(row("IdPaciente")),
+                .Nombre = row("Nombre").ToString(),
+                .Apellido1 = row("Apellido1").ToString(),
+                .Apellido2 = row("Apellido2").ToString(),
+                .Identificacion = row("Identificacion").ToString(),
+                .FechaNacimiento = Convert.ToDateTime(row("FechaNacimiento")),
+                .Telefono = row("Telefono").ToString(),
+                .Correo = row("Correo").ToString()
+            }
 
             Return paciente
+
         Catch ex As Exception
             Throw New Exception("Error al obtener paciente: " & ex.Message)
         End Try
     End Function
 
     Public Function GetPacientes() As DataTable
-        Dim dt As New DataTable()
         Try
-            Dim sql As String = "SELECT IdPaciente, Nombre + ' ' + Apellido1 + ' ' + Apellido2 AS NombreCompleto " &
-                                "FROM Pacientes ORDER BY Nombre, Apellido1, Apellido2"
+            Dim sql As String = "
+                SELECT IdPaciente, 
+                       Nombre + ' ' + Apellido1 + ' ' + Apellido2 AS NombreCompleto
+                FROM Pacientes
+                ORDER BY Nombre, Apellido1, Apellido2
+            "
 
-            Using connection As New SqlConnection(connectionString)
-                Using command As New SqlCommand(sql, connection)
-                    connection.Open()
-                    Using reader As SqlDataReader = command.ExecuteReader()
-                        dt.Load(reader)
-                    End Using
-                End Using
-            End Using
+            Return dbHelper.ExecuteQuery(sql)
 
-            Return dt
         Catch ex As Exception
             Throw New Exception("Error al cargar pacientes: " & ex.Message)
         End Try
     End Function
 
 End Class
+
+

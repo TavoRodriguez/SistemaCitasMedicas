@@ -1,4 +1,5 @@
 ﻿Public Class Pacientes
+
     Private _idPaciente As Integer
     Private _nombre As String
     Private _apellido1 As String
@@ -7,15 +8,15 @@
     Private _fechaNacimiento As Date
     Private _telefono As String
     Private _correo As String
-    Private _idUsuario As Integer
 
     ' Constructor vacío
     Public Sub New()
     End Sub
 
-    ' Constructor con parámetros
+    ' Constructor con parámetros (sin IdUsuario)
     Public Sub New(idPaciente As Integer, nombre As String, apellido1 As String, apellido2 As String,
-                   identificacion As String, fechaNacimiento As Date, telefono As String, correo As String, idUsuario As Integer)
+                   identificacion As String, fechaNacimiento As Date, telefono As String, correo As String)
+
         Me.IdPaciente = idPaciente
         Me.Nombre = nombre
         Me.Apellido1 = apellido1
@@ -24,7 +25,6 @@
         Me.FechaNacimiento = fechaNacimiento
         Me.Telefono = telefono
         Me.Correo = correo
-        Me.IdUsuario = idUsuario
     End Sub
 
     ' Propiedades
@@ -100,13 +100,5 @@
         End Set
     End Property
 
-    Public Property IdUsuario As Integer
-        Get
-            Return _idUsuario
-        End Get
-        Set(value As Integer)
-            _idUsuario = value
-        End Set
-    End Property
-
 End Class
+

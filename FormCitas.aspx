@@ -31,7 +31,8 @@
                 DataKeyNames="IdCita"
                 OnRowCommand="gvCitas_RowCommand"
                 OnRowDeleting="gvCitas_RowDeleting"
-                DataSourceID="SqlDataSourceCitas">
+                DataSourceID="SqlDataSourceCitas"
+                OnRowDataBound ="gvCitas_RowDataBound">
 
                 <Columns>
                     <asp:BoundField DataField="IdCita" HeaderText="ID" Visible="False" />
@@ -52,8 +53,10 @@
                             <asp:LinkButton ID="btnEliminar" runat="server"
                                 CssClass="btn btn-sm btn-danger"
                                 CommandName="Delete"
-                                CommandArgument='<%# Eval("IdCita") %>'
-                                OnClientClick="return confirm('¿Está seguro de eliminar esta cita?');">Eliminar</asp:LinkButton>
+                                CommandArgument='<%# Eval("IdCita") %>'>
+                                Eliminar
+                            </asp:LinkButton>
+
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

@@ -17,9 +17,12 @@
             ShowSwalMessage(page, title, message, icon)
         End Sub
 
-        Public Sub ShowSwalConfirmDelete(page As System.Web.UI.Page, linkButtonId As String, confirmMessage As String)
-            Dim script As String = $"
-                document.getElementById('{linkButtonId}').addEventListener('click', function(event) {{
+        Public Sub ShowSwalConfirmDelete(page As System.Web.UI.Page, serverUniqueId As String, clientId As String, confirmMessage As String)
+
+            confirmMessage = confirmMessage.Replace("'", "\'")
+
+            Dim script As String =
+            $"document.getElementById('{clientId}').addEventListener('click', function(event) {{
                     event.preventDefault();
                     Swal.fire({{
                         title: '¿Está seguro?',
@@ -32,11 +35,14 @@
                         cancelButtonText: 'Cancelar'
                     }}).then((result) => {{
                         if (result.isConfirmed) {{
-                            __doPostBack('{linkButtonId}', '');
+                            __doPostBack('{serverUniqueId}', '');
                         }}
                     }});
-                }});"
+            }});"
+
             ScriptManager.RegisterStartupScript(page, page.GetType(), Guid.NewGuid().ToString(), script, True)
+
         End Sub
+
     End Module
 End Namespace

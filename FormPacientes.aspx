@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Pacientes" Language="vb" AutoEventWireup="false" MasterPageFile="~/Site.Master" CodeBehind="FormPacientes.aspx.vb" Inherits="SistemaCitasMedicas.FormPacientes" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:HiddenField ID="editando" runat="server" Value ="0" />
+    <asp:HiddenField ID="editando" runat="server" Value="0" />
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -15,8 +15,9 @@
             <asp:GridView ID="gvPacientes" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-hover align-middle"
                 EmptyDataText="No hay pacientes registrados" GridLines="None" DataKeyNames="IdPaciente"
                 DataSourceID="SqlDataSourcePacientes"
-                OnRowDeleting ="gvPacientes_RowDeleting"
-                OnRowCommand="gvPacientes_RowCommand">
+                OnRowDeleting="gvPacientes_RowDeleting"
+                OnRowCommand="gvPacientes_RowCommand"
+                OnRowDataBound ="gvPacientes_RowDataBound">
 
                 <Columns>
                     <asp:BoundField DataField="IdPaciente" HeaderText="ID" Visible="False" />
@@ -42,8 +43,10 @@
                             <asp:LinkButton ID="btnEliminar" runat="server"
                                 CssClass="btn btn-sm btn-danger"
                                 CommandName="Delete"
-                                CommandArgument='<%# Eval("IdPaciente") %>'
-                                OnClientClick="return confirm('¿Está seguro de eliminar este paciente?');">Eliminar</asp:LinkButton>
+                                CommandArgument='<%# Eval("IdPaciente") %>'>
+                                Eliminar
+                            </asp:LinkButton>
+
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -53,94 +56,70 @@
 
     <asp:SqlDataSource ID="SqlDataSourcePacientes" runat="server"
         ConnectionString="<%$ ConnectionStrings:CitasMedicasDBConnectionString2 %>"
-        SelectCommand="SELECT IdPaciente, Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo FROM Pacientes">
-    </asp:SqlDataSource>
+        SelectCommand="SELECT IdPaciente, Nombre, Apellido1, Apellido2, Identificacion, FechaNacimiento, Telefono, Correo FROM Pacientes"></asp:SqlDataSource>
 
-   <!-- modal pacientes -->
-<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <asp:Panel ID="pnlAgregar" runat="server">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalAgregarLabel">Agregar Paciente 👨‍⚕️</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-
-                <div class="modal-body">
-                    <!-- campos para los datos del paciente -->
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
+    <!-- modal pacientes -->
+    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <asp:Panel ID="pnlAgregar" runat="server">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalAgregarLabel">Agregar Paciente 👨‍⚕️</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Apellido 1</label>
-                        <asp:TextBox ID="txtApellido1" runat="server" CssClass="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Apellido 2</label>
-                        <asp:TextBox ID="txtApellido2" runat="server" CssClass="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Identificación</label>
-                        <asp:TextBox ID="txtIdentificacion" runat="server" CssClass="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Fecha de Nacimiento</label>
-                        <asp:TextBox ID="txtFechaNacimiento" runat="server" CssClass="form-control" TextMode="Date" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Teléfono</label>
-                        <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Correo</label>
-                        <asp:TextBox ID="txtCorreo" runat="server" CssClass="form-control" TextMode="Email" />
-                        <asp:RegularExpressionValidator ID="revCorreo" runat="server" ControlToValidate="txtCorreo"
-                            ErrorMessage="* Formato de correo inválido"
-                            ValidationExpression="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
-                            CssClass="text-danger" Display="Dynamic" />
-                    </div>
-
-                    <hr />
-
-                    <!-- campos para los datos del usuario -->
-                    <asp:Panel ID="pnlCuentaUsuario" runat="server">
-                        <h6>Cuenta de Usuario</h6>
-
+                    <div class="modal-body">
+                        <!-- campos para los datos del paciente -->
                         <div class="mb-3">
-                            <label class="form-label">Nombre de Usuario</label>
-                            <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control" />
+                            <label class="form-label">Nombre</label>
+                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password" />
+                            <label class="form-label">Apellido 1</label>
+                            <asp:TextBox ID="txtApellido1" runat="server" CssClass="form-control" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Rol</label>
-                            <asp:DropDownList ID="ddlRol" runat="server" CssClass="form-select">
-                            </asp:DropDownList>
+                            <label class="form-label">Apellido 2</label>
+                            <asp:TextBox ID="txtApellido2" runat="server" CssClass="form-control" />
                         </div>
-                    </asp:Panel>
 
-                    <asp:Label ID="lblErrorModal" runat="server" CssClass="text-danger fw-bold" Visible="False"></asp:Label>
-                </div>
+                        <div class="mb-3">
+                            <label class="form-label">Identificación</label>
+                            <asp:TextBox ID="txtIdentificacion" runat="server" CssClass="form-control" />
+                        </div>
 
-                <div class="modal-footer">
-                    <asp:Button ID="btnGuardar" runat="server" Text="Guardar" CssClass="btn btn-success" OnClick="btnGuardar_Click" />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                </div>
-            </asp:Panel>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <asp:TextBox ID="txtFechaNacimiento" runat="server" CssClass="form-control" TextMode="Date" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Correo</label>
+                            <asp:TextBox ID="txtCorreo" runat="server" CssClass="form-control" TextMode="Email" />
+                            <asp:RegularExpressionValidator ID="revCorreo" runat="server" ControlToValidate="txtCorreo"
+                                ErrorMessage="* Formato de correo inválido"
+                                ValidationExpression="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+                                CssClass="text-danger" Display="Dynamic" />
+                        </div>
+
+                        <asp:Label ID="lblErrorModal" runat="server" CssClass="text-danger fw-bold" Visible="False"></asp:Label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <asp:Button ID="btnGuardar" runat="server" Text="Guardar" CssClass="btn btn-success" OnClick="btnGuardar_Click" />
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </asp:Panel>
+            </div>
         </div>
     </div>
-</div>
 
 </asp:Content>
 

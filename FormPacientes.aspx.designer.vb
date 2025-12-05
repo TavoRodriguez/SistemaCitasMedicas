@@ -131,42 +131,6 @@ Partial Public Class FormPacientes
     Protected WithEvents revCorreo As Global.System.Web.UI.WebControls.RegularExpressionValidator
 
     '''<summary>
-    '''Control pnlCuentaUsuario.
-    '''</summary>
-    '''<remarks>
-    '''Campo generado automáticamente.
-    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-    '''</remarks>
-    Protected WithEvents pnlCuentaUsuario As Global.System.Web.UI.WebControls.Panel
-
-    '''<summary>
-    '''Control txtNombreUsuario.
-    '''</summary>
-    '''<remarks>
-    '''Campo generado automáticamente.
-    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-    '''</remarks>
-    Protected WithEvents txtNombreUsuario As Global.System.Web.UI.WebControls.TextBox
-
-    '''<summary>
-    '''Control txtContrasena.
-    '''</summary>
-    '''<remarks>
-    '''Campo generado automáticamente.
-    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-    '''</remarks>
-    Protected WithEvents txtContrasena As Global.System.Web.UI.WebControls.TextBox
-
-    '''<summary>
-    '''Control ddlRol.
-    '''</summary>
-    '''<remarks>
-    '''Campo generado automáticamente.
-    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-    '''</remarks>
-    Protected WithEvents ddlRol As Global.System.Web.UI.WebControls.DropDownList
-
-    '''<summary>
     '''Control lblErrorModal.
     '''</summary>
     '''<remarks>

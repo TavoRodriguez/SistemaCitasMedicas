@@ -30,7 +30,8 @@
                 DataKeyNames="IdUsuario"
                 OnRowCommand= "gvUsuarios_RowCommand"
                 OnRowDeleting= "gvUsuarios_RowDeleting"
-                DataSourceID="SqlDataSourceUsuarios">
+                DataSourceID="SqlDataSourceUsuarios"
+                OnRowDataBound ="gvUsuarios_RowDataBound">
 
                 <Columns>
                     <asp:BoundField DataField="IdUsuario" HeaderText="ID" Visible="False" />
@@ -47,8 +48,10 @@
                             <asp:LinkButton ID="btnEliminar" runat="server"
                                 CssClass="btn btn-sm btn-danger"
                                 CommandName="Delete"
-                                CommandArgument='<%# Eval("IdUsuario") %>'
-                                OnClientClick="return confirm('¿Está seguro de eliminar este usuario?');">Eliminar</asp:LinkButton>
+                                CommandArgument='<%# Eval("IdUsuario") %>'>
+                                Eliminar
+                            </asp:LinkButton>
+
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

@@ -162,4 +162,22 @@ Public Class FormUsuarios
     Protected Sub ddlRolFiltro_SelectedIndexChanged(sender As Object, e As EventArgs)
         gvUsuarios.DataBind()
     End Sub
+
+    Protected Sub gvUsuarios_RowDataBound(sender As Object, e As GridViewRowEventArgs) Handles gvUsuarios.RowDataBound
+        If e.Row.RowType = DataControlRowType.DataRow Then
+
+            Dim btnEliminar As LinkButton = CType(e.Row.FindControl("btnEliminar"), LinkButton)
+
+            If btnEliminar IsNot Nothing Then
+                ShowSwalConfirmDelete(
+                    page:=Me,
+                    serverUniqueId:=btnEliminar.UniqueID,
+                    clientId:=btnEliminar.ClientID,
+                    confirmMessage:="¿Está seguro de eliminar este usuario?"
+                )
+            End If
+
+        End If
+    End Sub
+
 End Class

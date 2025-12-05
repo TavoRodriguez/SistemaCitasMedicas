@@ -137,4 +137,22 @@ Public Class FormDoctores
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
         End If
     End Sub
+
+    Protected Sub gvDoctores_RowDataBound(sender As Object, e As GridViewRowEventArgs) Handles gvDoctores.RowDataBound
+        If e.Row.RowType = DataControlRowType.DataRow Then
+
+            Dim btnEliminar As LinkButton = CType(e.Row.FindControl("btnEliminar"), LinkButton)
+
+            If btnEliminar IsNot Nothing Then
+                ShowSwalConfirmDelete(
+                    page:=Me,
+                    serverUniqueId:=btnEliminar.UniqueID,
+                    clientId:=btnEliminar.ClientID,
+                    confirmMessage:="¿Está seguro de eliminar este doctor?"
+                )
+            End If
+
+        End If
+    End Sub
+
 End Class

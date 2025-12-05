@@ -77,6 +77,24 @@ Partial Public Class FormUsuarios
     Protected WithEvents txtNombreUsuario As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
+    '''Control txtCorreo.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents txtCorreo As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''Control revCorreo.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents revCorreo As Global.System.Web.UI.WebControls.RegularExpressionValidator
+
+    '''<summary>
     '''Control txtContrasena.
     '''</summary>
     '''<remarks>

@@ -36,6 +36,7 @@
                 <Columns>
                     <asp:BoundField DataField="IdUsuario" HeaderText="ID" Visible="False" />
                     <asp:BoundField DataField="NombreUsuario" HeaderText="Nombre de Usuario" />
+                    <asp:BoundField DataField="Correo" HeaderText="Correo" />
                     <asp:BoundField DataField="Rol" HeaderText="Rol" />
 
                     <asp:TemplateField HeaderText="Acciones">
@@ -65,6 +66,7 @@
         SelectCommand="
             SELECT U.IdUsuario, 
                    U.NombreUsuario, 
+                   U.Correo,
                    R.NombreRol AS Rol
             FROM Usuarios U
             INNER JOIN Roles R ON U.IdRol = R.IdRol
@@ -89,6 +91,16 @@
                             <label class="form-label">Nombre de Usuario</label>
                             <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control" />
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Correo</label>
+                            <asp:TextBox ID="txtCorreo" runat="server" CssClass="form-control" TextMode="Email" />
+                            <asp:RegularExpressionValidator ID="revCorreo" runat="server" ControlToValidate="txtCorreo"
+                                ErrorMessage="* Formato de correo inválido"
+                                ValidationExpression="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+                                CssClass="text-danger" Display="Dynamic" />
+                        </div>
+
 
                         <div class="mb-3">
                             <label class="form-label">Contraseña</label>

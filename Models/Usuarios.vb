@@ -4,17 +4,19 @@
     Private _nombreUsuario As String
     Private _contrasena As String
     Private _idRol As Integer
+    Private _correo As String
 
     ' Constructor vacío
     Public Sub New()
     End Sub
 
     ' Constructor con parámetros
-    Public Sub New(idUsuario As Integer, nombreUsuario As String, contrasena As String, idRol As Integer)
+    Public Sub New(idUsuario As Integer, nombreUsuario As String, contrasena As String, idRol As Integer, correo As String)
         Me.IdUsuario = idUsuario
         Me.NombreUsuario = nombreUsuario
         Me.Contrasena = contrasena
         Me.IdRol = idRol
+        Me.Correo = correo
     End Sub
 
     ' Propiedades
@@ -53,6 +55,17 @@
             _idRol = value
         End Set
     End Property
+
+    Public Property Correo As String
+        Get
+            Return _correo
+        End Get
+        Set(value As String)
+            _correo = value
+        End Set
+    End Property
+
 End Class
+
 
 

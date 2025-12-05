@@ -44,7 +44,7 @@ Public Class FormUsuarios
 
     Protected Sub btnGuardar_Click(sender As Object, e As EventArgs) Handles btnGuardar.Click
         ' Validaciones
-        If txtNombreUsuario.Text = "" Or ddlRol.SelectedValue = "0" Then
+        If txtNombreUsuario.Text = "" Or txtCorreo.Text = "" Or ddlRol.SelectedValue = "0" Then
             ShowSwalMessage(Me, "Error", "Complete todos los campos requeridos.", "error")
             ScriptManager.RegisterStartupScript(Me, Me.GetType(), "abrirModal", "$('#modalAgregar').modal('show');", True)
             Return
@@ -65,10 +65,11 @@ Public Class FormUsuarios
                 contrasenaEncriptada = EncriptarCon(txtContrasena.Text.Trim())
 
                 Dim nuevoUsuario As New Usuarios() With {
-                    .NombreUsuario = txtNombreUsuario.Text.Trim(),
-                    .Contrasena = contrasenaEncriptada,
-                    .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
-                }
+                .NombreUsuario = txtNombreUsuario.Text.Trim(),
+                .Contrasena = contrasenaEncriptada,
+                .IdRol = Convert.ToInt32(ddlRol.SelectedValue),
+                .Correo = txtCorreo.Text.Trim() ' <-- Se agrega correo
+            }
 
                 dbUsuario.Create(nuevoUsuario)
                 idUsuario = dbUsuario.GetByIdUsuarioPorNombre(nuevoUsuario.NombreUsuario).IdUsuario
@@ -78,7 +79,7 @@ Public Class FormUsuarios
             Else
                 ' Editar usuario existente
                 idUsuario = Convert.ToInt32(editando.Value)
-                Dim usuarioExistente As Usuarios = dbUsuario.GetByIdUsuarioPorNombre(txtNombreUsuario.Text.Trim())
+                Dim usuarioExistente As Usuarios = dbUsuario.GetById(idUsuario)
 
                 ' Si se ingresó nueva contraseña, encriptarla
                 If txtContrasena.Text.Trim() <> "" Then
@@ -88,11 +89,12 @@ Public Class FormUsuarios
                 End If
 
                 Dim usuarioActualizar As New Usuarios() With {
-                    .IdUsuario = idUsuario,
-                    .NombreUsuario = txtNombreUsuario.Text.Trim(),
-                    .Contrasena = contrasenaEncriptada,
-                    .IdRol = Convert.ToInt32(ddlRol.SelectedValue)
-                }
+                .IdUsuario = idUsuario,
+                .NombreUsuario = txtNombreUsuario.Text.Trim(),
+                .Contrasena = contrasenaEncriptada,
+                .IdRol = Convert.ToInt32(ddlRol.SelectedValue),
+                .Correo = txtCorreo.Text.Trim()
+            }
 
                 dbUsuario.Update(usuarioActualizar)
                 ShowSwalMessage(Me, "Actualizado", "Usuario actualizado correctamente.", "success")
@@ -111,6 +113,7 @@ Public Class FormUsuarios
     Private Sub LimpiarCampos()
         txtNombreUsuario.Text = ""
         txtContrasena.Text = ""
+        txtCorreo.Text = ""
         ddlRol.SelectedIndex = 0
         editando.Value = "0"
     End Sub
@@ -120,8 +123,8 @@ Public Class FormUsuarios
             Dim idUsuario As Integer = Convert.ToInt32(e.CommandArgument)
             Dim usuario As Usuarios = dbUsuario.GetById(idUsuario)
 
-
             txtNombreUsuario.Text = usuario.NombreUsuario
+            txtCorreo.Text = usuario.Correo
             ddlRol.SelectedValue = usuario.IdRol
             txtContrasena.Text = ""
             editando.Value = usuario.IdUsuario.ToString()
